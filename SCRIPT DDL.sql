@@ -14,13 +14,13 @@ CREATE TABLE hotel.empleado (
     Localidad VARCHAR(30) NOT NULL,
     Puesto VARCHAR(15) NOT NULL,
     Superior INT UNSIGNED,
-    Departamento INT UNSIGNED NOT NULL,
+    Departamento INT UNSIGNED,
 	-- Clave foránea de departamento declarada en ALTER TABLE (ln 38)
     CONSTRAINT CH_empleado_NIF CHECK (NIF_NIE RLIKE '^[A-Z]{0,1}[0-9]{8}[A-Z]{1}$'),
-    CONSTRAINT CH_empleado_NIE CHECK (NIE_Antiguo RLIKE '^[A-Z]{1}[0-9]{8}[A-Z]{1}$'),
+    CONSTRAINT CH_empleado_NIE CHECK (NIE_Antiguo RLIKE '^[A-Z]{1}[0-9]{7}[A-Z]{1}$'),
     CONSTRAINT CH_empleado_SegSocial CHECK (Seg_Social RLIKE '^[A-Z0-9]{12}$'),
     CONSTRAINT FK_empleado_Superior FOREIGN KEY (Superior)
-        REFERENCES empleado (ID)
+        REFERENCES empleado (ID) ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
 CREATE TABLE hotel.departamento (
@@ -30,22 +30,22 @@ CREATE TABLE hotel.departamento (
     Jefe1 INT UNSIGNED NOT NULL,
     Jefe2 INT UNSIGNED,
     CONSTRAINT FK_departamento_Jefe1 FOREIGN KEY (Jefe1)
-        REFERENCES empleado (ID),
+        REFERENCES empleado (ID) ON DELETE RESTRICT ON UPDATE CASCADE,
     CONSTRAINT FK_departamento_Jefe2 FOREIGN KEY (Jefe2)
-        REFERENCES empleado (ID)
+        REFERENCES empleado (ID) ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
 ALTER TABLE hotel.empleado
 ADD 
 	CONSTRAINT FK_empleado_Departamento FOREIGN KEY (Departamento)
-		REFERENCES departamento (ID);
+		REFERENCES departamento (ID) ON DELETE RESTRICT ON UPDATE CASCADE;
         
  CREATE TABLE hotel.articulo (
     ID INT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
     Nombre_articulo VARCHAR(50) UNIQUE NOT NULL,
     Departamento INT UNSIGNED NOT NULL,
     CONSTRAINT FK_articulo_Departamento FOREIGN KEY (Departamento)
-        REFERENCES departamento (ID)
+        REFERENCES departamento (ID) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 CREATE TABLE hotel.proveedor (
@@ -67,9 +67,9 @@ CREATE TABLE hotel.linea_pedido (
     Pedido INT UNSIGNED NOT NULL,
     Articulo INT UNSIGNED NOT NULL,
     CONSTRAINT FK_linea_pedido FOREIGN KEY (Pedido)
-        REFERENCES Pedido (ID),
+        REFERENCES Pedido (ID) ON DELETE CASCADE ON UPDATE CASCADE,
     CONSTRAINT FK_linea_ped_articulo FOREIGN KEY (Articulo)
-        REFERENCES Articulo (ID),
+        REFERENCES Articulo (ID) ON DELETE CASCADE ON UPDATE CASCADE,
     CONSTRAINT PK_linea_pedido PRIMARY KEY (ID , Pedido)
 );
 
@@ -96,9 +96,9 @@ CREATE TABLE hotel.linea_albaran (
     Albaran INT UNSIGNED NOT NULL,
     Articulo INT UNSIGNED NOT NULL,
     CONSTRAINT FK_linea_Albaran FOREIGN KEY (Albaran)
-        REFERENCES Albaran (ID),
+        REFERENCES Albaran (ID) ON DELETE CASCADE ON UPDATE CASCADE,
     CONSTRAINT FK_linea_Alb_articulo FOREIGN KEY (Articulo)
-        REFERENCES Articulo (ID),
+        REFERENCES Articulo (ID) ON DELETE CASCADE ON UPDATE CASCADE,
     CONSTRAINT PK_linea_albaran PRIMARY KEY (ID , Albaran)
 );
 
@@ -112,9 +112,9 @@ CREATE TABLE hotel.factura_pago (
 
 ALTER TABLE hotel.albaran
 	ADD CONSTRAINT FK_albaran_proveedor FOREIGN KEY (Proveedor)
-		REFERENCES Proveedor (ID),
+		REFERENCES Proveedor (ID) ON DELETE CASCADE ON UPDATE CASCADE,
 	ADD CONSTRAINT FK_albaran_factura FOREIGN KEY (Factura)
-		REFERENCES Factura_pago (ID)
+		REFERENCES Factura_pago (ID) ON DELETE RESTRICT ON UPDATE CASCADE
 ;
 
 CREATE TABLE hotel.factura_cobro (
@@ -136,14 +136,14 @@ CREATE TABLE hotel.reserva (
     Fecha DATE DEFAULT (CURRENT_DATE),
     Factura INT UNSIGNED,
     CONSTRAINT FK_reserva_factura FOREIGN KEY (Factura)
-        REFERENCES factura_cobro (ID)
+        REFERENCES factura_cobro (ID) ON DELETE SET NULL ON UPDATE CASCADE
 );
 
 CREATE TABLE hotel.cliente (
     ID INT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
     NIF_NIE VARCHAR(10) NOT NULL UNIQUE,
     Domicilio VARCHAR(120) NOT NULL,
-    CONSTRAINT CH_cliente_NIF CHECK (NIF_NIE RLIKE '^[A-Z]{0,1}[0-9]{8}[A-Z]{1}$')
+    CONSTRAINT CH_cliente_NIF CHECK (NIF_NIE RLIKE '^[A-Z0-9]{1}[0-9]{7}[A-Z]{1}$')
 );
 
 -- TABLAS DE RELACIONES
@@ -153,20 +153,20 @@ CREATE TABLE hotel.realiza_pedido (
     Departamento INT UNSIGNED NOT NULL,
     Proveedor INT UNSIGNED NOT NULL,
     CONSTRAINT FK_Realiza_Pedido FOREIGN KEY (Pedido)
-        REFERENCES Pedido (ID),
+        REFERENCES Pedido (ID) ON DELETE CASCADE ON UPDATE CASCADE,
     CONSTRAINT FK_Realiza_Departamento FOREIGN KEY (Departamento)
-        REFERENCES Departamento (ID),
+        REFERENCES Departamento (ID) ON DELETE RESTRICT ON UPDATE CASCADE,
     CONSTRAINT FK_Realiza_Proveedor FOREIGN KEY (Proveedor)
-        REFERENCES Proveedor (ID)
+        REFERENCES Proveedor (ID) ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
 CREATE TABLE hotel.corresponde (
     Pedido INT UNSIGNED,
     Albaran INT UNSIGNED,
     CONSTRAINT FK_corresponde_Pedido FOREIGN KEY (Pedido)
-        REFERENCES Pedido (ID),
+        REFERENCES Pedido (ID) ON DELETE CASCADE ON UPDATE CASCADE,
     CONSTRAINT FK_corresponde_Albaran FOREIGN KEY (Albaran)
-        REFERENCES Albaran (ID),
+        REFERENCES Albaran (ID) ON DELETE CASCADE ON UPDATE CASCADE,
     CONSTRAINT PK_corresponde PRIMARY KEY (Pedido , Albaran)
 );
 
@@ -175,11 +175,11 @@ CREATE TABLE hotel.realiza_reserva (
     Habitacion INT UNSIGNED,
     Cliente INT UNSIGNED NOT NULL,
     CONSTRAINT FK_realiza_reserva FOREIGN KEY (Reserva)
-        REFERENCES Reserva (ID),
+        REFERENCES Reserva (ID) ON DELETE CASCADE ON UPDATE CASCADE,
     CONSTRAINT FK_realiza_Habitacion FOREIGN KEY (Habitacion)
-        REFERENCES Habitacion (ID),
+        REFERENCES Habitacion (ID) ON DELETE RESTRICT ON UPDATE CASCADE,
     CONSTRAINT FK_realiza_Cliente FOREIGN KEY (Cliente)
-        REFERENCES Cliente (ID),
+        REFERENCES Cliente (ID) ON DELETE RESTRICT ON UPDATE CASCADE,
     CONSTRAINT PK_realiza_reserva PRIMARY KEY (Reserva , Habitacion)
 );
 
@@ -189,18 +189,18 @@ CREATE TABLE hotel.empleado_telefono (
     Empleado INT UNSIGNED,
     Telefono CHAR(9),
     Prefijo CHAR(3),
-    Descripcion VARCHAR(10),
+    Descripcion VARCHAR(20),
     CONSTRAINT FK_empleado_telefono FOREIGN KEY (Empleado)
-        REFERENCES Empleado (ID),
+        REFERENCES Empleado (ID) ON DELETE CASCADE ON UPDATE CASCADE,
     CONSTRAINT PK_empleado_telefono PRIMARY KEY (Empleado , Descripcion)
 );
 
 CREATE TABLE hotel.empleado_email (
     Empleado INT UNSIGNED,
     Email VARCHAR(50),
-    Descripcion VARCHAR(10),
+    Descripcion VARCHAR(20),
     CONSTRAINT FK_empleado_email FOREIGN KEY (Empleado)
-        REFERENCES Empleado (ID),
+        REFERENCES Empleado (ID) ON DELETE CASCADE ON UPDATE CASCADE,
     CONSTRAINT PK_empleado_email PRIMARY KEY (Empleado , Descripcion)
 );
 
@@ -208,9 +208,9 @@ CREATE TABLE hotel.departamento_telefono (
     Departamento INT UNSIGNED,
     Telefono CHAR(9),
     Extension CHAR(4),
-    Descripcion VARCHAR(10),
+    Descripcion VARCHAR(20),
     CONSTRAINT FK_Departamento_telefono FOREIGN KEY (Departamento)
-        REFERENCES Departamento (ID),
+        REFERENCES Departamento (ID) ON DELETE CASCADE ON UPDATE CASCADE,
     CONSTRAINT PK_Departamento_telefono PRIMARY KEY (Departamento , Descripcion)
 );
 
@@ -218,19 +218,19 @@ CREATE TABLE hotel.proveedor_telefono (
     Proveedor INT UNSIGNED,
     Telefono CHAR(9),
     Prefijo CHAR(3),
-    Descripcion VARCHAR(10),
+    Descripcion VARCHAR(20),
     Extension CHAR(4),
     CONSTRAINT FK_proveedor_telefono FOREIGN KEY (Proveedor)
-        REFERENCES Proveedor (ID),
+        REFERENCES Proveedor (ID) ON DELETE CASCADE ON UPDATE CASCADE,
     CONSTRAINT PK_proveedor_telefono PRIMARY KEY (Proveedor , Descripcion)
 );
 
 CREATE TABLE hotel.proveedor_email (
     Proveedor INT UNSIGNED,
     Email VARCHAR(50),
-    Descripcion VARCHAR(10),
+    Descripcion VARCHAR(20),
     CONSTRAINT FK_proveedor_email FOREIGN KEY (Proveedor)
-        REFERENCES Proveedor (ID),
+        REFERENCES Proveedor (ID) ON DELETE CASCADE ON UPDATE CASCADE,
     CONSTRAINT PK_proveedor_email PRIMARY KEY (Proveedor , Descripcion)
 );
 
@@ -238,18 +238,18 @@ CREATE TABLE hotel.cliente_telefono (
     Cliente INT UNSIGNED,
     Telefono CHAR(9),
     Prefijo CHAR(3),
-    Descripcion VARCHAR(10),
+    Descripcion VARCHAR(20),
     CONSTRAINT FK_cliente_telefono FOREIGN KEY (Cliente)
-        REFERENCES Cliente (ID),
+        REFERENCES Cliente (ID) ON DELETE CASCADE ON UPDATE CASCADE,
     CONSTRAINT PK_cliente_telefono PRIMARY KEY (Cliente , Descripcion)
 );
 
 CREATE TABLE hotel.cliente_email (
     Cliente INT UNSIGNED,
     Email VARCHAR(50),
-    Descripcion VARCHAR(10),
+    Descripcion VARCHAR(20),
     CONSTRAINT FK_cliente_email FOREIGN KEY (Cliente)
-        REFERENCES Cliente (ID),
+        REFERENCES Cliente (ID) ON DELETE CASCADE ON UPDATE CASCADE,
     CONSTRAINT PK_cliente_email PRIMARY KEY (Cliente , Descripcion)
 );
 
@@ -262,8 +262,8 @@ CREATE TABLE hotel.localidad (
 
 ALTER TABLE hotel.empleado
 	ADD CONSTRAINT FK_empleado_localidad FOREIGN KEY (Localidad)
-		REFERENCES Localidad(Localidad);
+		REFERENCES Localidad(Localidad) ON DELETE RESTRICT ON UPDATE CASCADE;
     
 ALTER TABLE hotel.proveedor
 	ADD CONSTRAINT FK_proveedor_localidad FOREIGN KEY (Localidad)
-		REFERENCES Localidad(Localidad);
+		REFERENCES Localidad(Localidad) ON DELETE RESTRICT ON UPDATE CASCADE;
