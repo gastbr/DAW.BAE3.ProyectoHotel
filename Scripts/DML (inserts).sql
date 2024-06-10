@@ -3,7 +3,8 @@ use hotel;
 INSERT INTO localidad (Localidad, Codigo_postal, Provincia, Pais) 
 VALUES ('Madrid', '28001', 'Madrid', 'España'),
        ('Barcelona', '08001', 'Barcelona', 'España'),
-       ('Sevilla', '41001', 'Sevilla', 'España');
+       ('Sevilla', '41001', 'Sevilla', 'España'),
+       ('Soho', '64850', 'Sevilla', 'España');
         
 INSERT INTO empleado (Nombre, Apellido1, Apellido2, NIF_NIE, NIE_Antiguo, Seg_Social, Domicilio, Localidad, Puesto, Superior, Departamento) 
 VALUES ('Juan', 'Perez', 'Gomez', '12345678A', 'X1234567A', 'SS1234567890', 'Calle Falsa 123', 'Madrid', 'Recepcionista', NULL, NULL),
@@ -27,7 +28,8 @@ VALUES ('Toallas', 1),
 INSERT INTO proveedor (Razon_social, NIF, Domicilio_fiscal, Localidad) 
 VALUES ('Proveedor 1', 'A12345678', 'Calle Comercio 123', 'Madrid'),
        ('Proveedor 2', 'B87654321', 'Avenida Industria 456', 'Barcelona'),
-       ('Proveedor 3', 'C11223344', 'Plaza Mercados 789', 'Sevilla');
+       ('Proveedor 3', 'C11223344', 'Plaza Mercados 789', 'Sevilla'),
+       ('Proveedor 4', '85495874D', 'Leicester Sq 79', 'Londres');
 
 INSERT INTO pedido (FechaHora) 
 VALUES ('2023-01-01 10:00:00'),
@@ -69,10 +71,10 @@ VALUES ('2023-02-10', 1),
        ('2023-02-11', 2),
        ('2023-02-12', 3);
 
-INSERT INTO cliente (NIF_NIE, Domicilio) 
-VALUES ('33456789A', 'Calle Alegria 123, Madrid'),
-       ('98765432B', 'Avenida Felicidad 456, Barcelona'),
-       ('12345678C', 'Plaza Contento 789, Sevilla');
+INSERT INTO cliente (NIF_NIE, Nombre, Apellido1, Apellido2, Domicilio) 
+VALUES ('33456789A', 'Miriam', 'Pérez', 'Hidalgo', 'Calle Alegria 123, Madrid'),
+       ('98765432B', 'Gabriel', 'Gómez', 'Rodríguez', 'Avenida Felicidad 456, Barcelona'),
+       ('12345678C', 'José', 'Álvarez', 'Bermúdez', 'Plaza Contento 789, Sevilla');
 
 INSERT INTO realiza_pedido (Pedido, Departamento, Proveedor) 
 VALUES (1, 1, 1),
