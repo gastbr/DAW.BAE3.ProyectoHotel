@@ -104,14 +104,12 @@ CREATE TABLE hotel.linea_albaran (
     CONSTRAINT PK_linea_albaran PRIMARY KEY (ID , Albaran)
 );
 
-/* 
-
 DELIMITER $$
 CREATE TRIGGER hotel.albaran_calcular_importe
-after insert on linea_albaran
+before insert on linea_albaran
 for each row
 begin
-update linea_albaran set importe = (precio_compra - ((new.descuento/100) * new.precio_compra) + ((new.impuesto/100) * new.precio_compra)) where id = new.id;
+set new.importe = (new.precio_compra - ((new.descuento/100) * new.precio_compra) + ((new.impuesto/100) * new.precio_compra));
 UPDATE albaran 
 SET 
     base_imponible = base_imponible + new.precio_compra,
@@ -122,12 +120,11 @@ WHERE
     id = new.albaran;
 end$$
 
-/*
-CREATE TRIGGER hotel.albaran_actualizar_importes
-after update on linea_albaran
+CREATE TRIGGER hotel.albaran_actualizar_importe
+before update on linea_albaran
 for each row
 begin
-update linea_albaran set importe = (precio_compra - ((new.descuento/100) * new.precio_compra) + ((new.impuesto/100) * new.precio_compra)) where id = new.id;
+set new.importe = (new.precio_compra - ((new.descuento/100) * new.precio_compra) + ((new.impuesto/100) * new.precio_compra));
 UPDATE albaran 
 SET 
     base_imponible = base_imponible + new.precio_compra - old.precio_compra,
@@ -137,7 +134,7 @@ SET
 WHERE
     id = new.albaran;
 end$$
-*/
+
 
 DELIMITER ;
 
@@ -310,3 +307,20 @@ ALTER TABLE hotel.empleado
 ALTER TABLE hotel.proveedor
 	ADD CONSTRAINT FK_proveedor_localidad FOREIGN KEY (Localidad)
 		REFERENCES Localidad(Localidad) ON DELETE RESTRICT ON UPDATE CASCADE;
+        
+CREATE VIEW historico_precios_articulos as
+select
+  ar.id "ID Artículo",
+  ar.nombre_articulo "Nombre artículo",
+  max(l.precio_compra) "Precio máximo",
+  min(l.precio_compra) "Precio mínimo",
+  round(
+    avg(l.precio_compra),
+    2
+  ) "Precio medio"
+from
+  articulo ar
+  inner join linea_albaran l on ar.id = l.articulo
+  inner join albaran al on l.albaran = al.id
+group by
+  ar.id;

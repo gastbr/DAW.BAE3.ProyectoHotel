@@ -70,10 +70,58 @@ FROM
     realiza_reserva r ON r.habitacion = h.id
         LEFT JOIN
     cliente c ON c.id = r.cliente;
-
+    
 -- SUBCONSULTAS:
+
+-- Selecciona la fecha y el número de la factura correspondiente de todas las reservas realizadas por clientes cuyo apellido comience por la letra P.
+SELECT 
+    fecha, factura
+FROM
+    reserva
+WHERE
+    id = (SELECT 
+            reserva
+        FROM
+            realiza_reserva
+        WHERE
+            cliente = (SELECT 
+                    id
+                FROM
+                    cliente
+                WHERE
+                    apellido1 LIKE 'P%'));
+                    
+-- Selecciona los nombres completos, los puestos y el número de la seguridad social de todos los empleados cuyo superior tenga tenga la cadena "carmen" en su nombre.
+SELECT 
+    concat_ws(" ", nombre, apellido1, apellido2) "Nombre completo", puesto, seg_social
+FROM
+    empleado
+WHERE
+    superior = (SELECT 
+            id
+        FROM
+            empleado
+        WHERE
+            nombre LIKE '%carmen%');
+
+
+
+-- CONSULTAS EN INSERT, DELETE O UPDATE:
 -- Inserta una nueva línea al albarán nº 4, con un producto que contenga en su nombre la cadena "ordenador" y con el precio 779.99€. Los valores de impuestos y descuentos se dejan en su valor por defecto, que es 0. La cantidad es 1 por defecto y el importe final se actualiza solo con un trigger.
-insert into linea_albaran (Precio_compra, Albaran, Articulo) values ('779.99', '4', (select id from articulo where nombre_articulo like '%ordenador%'));
+insert into linea_albaran (Precio_compra, Albaran, Articulo) 
+values 
+  (
+    '779.99', 
+    '4', 
+    (
+      select 
+        id 
+      from 
+        articulo 
+      where 
+        nombre_articulo like '%ordenador%'
+    )
+  );
 
 -- Elimina de la tabla proveedor todos los proveedores que se encuentren en una localidad situada en el país Reino Unido.
 DELETE FROM proveedor 
@@ -85,6 +133,7 @@ WHERE
     
     WHERE
         pais = 'Reino Unido');
+        
 
 -- Actualiza a 44 el prefijo telefónico de todos los proveedores que se encuentren en una ciudad que se encuentre en el país Reino Unido.
 UPDATE proveedor_telefono 
@@ -101,4 +150,10 @@ WHERE
                 FROM
                     localidad
                 WHERE
-                    pais = 'Reino Unido')); 
+                    pais = 'Reino Unido'));
+
+-- Vista histórico de precios de artículos
+SELECT 
+    *
+FROM
+    hotel.historico_precios_articulos;

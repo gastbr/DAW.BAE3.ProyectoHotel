@@ -99,8 +99,6 @@ VALUES (50, 10.10, 15.00, 0.00, 1, 1),
        (3, 207.40, 0.00, 0.00, 7, 3),
        (8, 207.40, 15.00, 20.00, 2, 3),
        (5, 207.40, 3.00, 50.00, 3, 3);
-       
--- Error Code: 1442. Can't update table 'linea_albaran' in stored function/trigger because it is already used by statement which invoked this stored function/trigger.
 
 INSERT INTO factura_cobro (Fecha_factura, Base_imponible, Total_impuestos) 
 VALUES ('2023-02-01', 500.00, 105.00),
