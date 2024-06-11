@@ -104,7 +104,21 @@ WHERE
         WHERE
             nombre LIKE '%carmen%');
 
-
+-- Selecciona todos los empleados (con id, nombre completo, domicilio y localidad) que vivan en la provincia de Las Palmas de Gran Canaria,
+SELECT 
+    id 'ID empleado',
+    CONCAT_WS(' ', nombre, apellido1, apellido2) 'Nombre completo',
+    domicilio,
+    localidad
+FROM
+    empleado
+WHERE
+    localidad IN (SELECT 
+            localidad
+        FROM
+            localidad
+        WHERE
+            provincia LIKE '%las palmas%');
 
 -- CONSULTAS EN INSERT, DELETE O UPDATE:
 -- Inserta una nueva línea al albarán nº 4, con un producto que contenga en su nombre la cadena "ordenador" y con el precio 779.99€. Los valores de impuestos y descuentos se dejan en su valor por defecto, que es 0. La cantidad es 1 por defecto y el importe final se actualiza solo con un trigger.
@@ -122,6 +136,8 @@ values
         nombre_articulo like '%ordenador%'
     )
   );
+  
+  insert into asdasd values (), (), ();
 
 -- Elimina de la tabla proveedor todos los proveedores que se encuentren en una localidad situada en el país Reino Unido.
 DELETE FROM proveedor 

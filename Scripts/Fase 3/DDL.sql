@@ -164,7 +164,9 @@ CREATE TABLE hotel.habitacion (
     ID INT UNSIGNED PRIMARY KEY,
     Tipo ENUM('Normal', 'Doble', 'Suite', 'Ático') NOT NULL,
     Vista_mar BOOLEAN NOT NULL,
-    Precio_base DECIMAL(6 , 2 ) NOT NULL
+    Precio_base DECIMAL(6 , 2 ) NOT NULL,
+    Estado enum('Pendiente', 'Limpia'),
+    Ocupada boolean
 );
 
 CREATE TABLE hotel.reserva (

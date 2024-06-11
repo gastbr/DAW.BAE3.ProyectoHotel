@@ -18,7 +18,7 @@ WHERE
 end$$
 
 DROP TRIGGER if exists hotel.albaran_actualizar_importe$$
-CREATE TRIGGER hotel.albaran_actualizar_importe
+CREATE TRIGGER hotel.albaran_actualizar_importes
 before update on linea_albaran
 for each row
 begin
@@ -63,12 +63,13 @@ begin
 end$$
 
 DROP PROCEDURE IF EXISTS hotel.emails_clientes$$
+
 CREATE PROCEDURE hotel.emails_clientes(OUT cadena LONGTEXT)
 BEGIN
     DECLARE flag BOOLEAN DEFAULT FALSE;
-    DECLARE vemail VARCHAR(50);
-    DECLARE vdescripcion VARCHAR(50);
-    DECLARE vcliente INT;
+    DECLARE email VARCHAR(50);
+    DECLARE descripcion VARCHAR(50);
+    DECLARE cliente INT;
 
     DECLARE cursor1 CURSOR FOR SELECT cliente, email, descripcion FROM cliente_email;
     DECLARE CONTINUE HANDLER FOR NOT FOUND SET flag = TRUE;
@@ -77,17 +78,23 @@ BEGIN
     OPEN cursor1;
 
     bucle: LOOP
-        FETCH cursor1 INTO vcliente, vemail, vdescripcion;
-        IF flag = TRUE THEN
+        FETCH cursor1 INTO cliente, email, descripcion;
+        IF flag THEN
             LEAVE bucle;
         END IF;
 
-        SET cadena = concat(cadena, "", );
+        SET cadena = CONCAT(
+            cadena, 
+            "Nombre: ", 
+            (SELECT CONCAT_WS(" ", nombre, apellido1, apellido2) FROM hotel.cliente WHERE id = cliente), 
+            "/ Descripcion: ", descripcion, 
+            "/ Email: ", email, 
+            "; "
+        );
     END LOOP bucle;
 
     CLOSE cursor1;
 END$$
-delimiter ;
 
 call hotel.emails_clientes(@var);
 select @var;
