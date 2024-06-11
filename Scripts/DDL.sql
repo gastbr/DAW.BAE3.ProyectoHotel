@@ -78,12 +78,12 @@ CREATE TABLE hotel.albaran (
     Numero_externo VARCHAR(15),
     Fecha_albaran DATE NOT NULL,
     Fecha_recepcion DATE NOT NULL,
-    Base_imponible DECIMAL(10 , 2 ) NOT NULL,
-    Total_impuestos DECIMAL(10 , 2 ) NOT NULL,
-    Importe_total DECIMAL(10 , 2 ) NOT NULL,
+    Base_imponible DECIMAL(10 , 2 ) NOT NULL DEFAULT 0,
+    Total_impuestos DECIMAL(10 , 2 ) NOT NULL DEFAULT 0,
+    Total_descuentos DECIMAL(10 , 2 ) NOT NULL DEFAULT 0,
+    Importe_total DECIMAL(10 , 2 ) NOT NULL DEFAULT 0,
     Proveedor INT UNSIGNED NOT NULL,
     Factura INT UNSIGNED
-    -- Claves foráneas declaradas en ALTER TABLE (ln 113)
 );
 
 CREATE TABLE hotel.linea_albaran (
@@ -92,15 +92,54 @@ CREATE TABLE hotel.linea_albaran (
     Precio_compra DECIMAL(10 , 2 ) NOT NULL,
     Impuesto DECIMAL(5 , 2 ) NOT NULL DEFAULT 0,
     Descuento DECIMAL(5 , 2 ) NOT NULL DEFAULT 0,
-    Importe DECIMAL(10 , 2 ) NOT NULL,
+    Importe DECIMAL(10 , 2 ),
     Albaran INT UNSIGNED NOT NULL,
     Articulo INT UNSIGNED NOT NULL,
     CONSTRAINT FK_linea_Albaran FOREIGN KEY (Albaran)
-        REFERENCES Albaran (ID) ON DELETE CASCADE ON UPDATE CASCADE,
+        REFERENCES Albaran (ID)
+        ON DELETE CASCADE ON UPDATE CASCADE,
     CONSTRAINT FK_linea_Alb_articulo FOREIGN KEY (Articulo)
-        REFERENCES Articulo (ID) ON DELETE CASCADE ON UPDATE CASCADE,
+        REFERENCES Articulo (ID)
+        ON DELETE CASCADE ON UPDATE CASCADE,
     CONSTRAINT PK_linea_albaran PRIMARY KEY (ID , Albaran)
 );
+
+/* 
+
+DELIMITER $$
+CREATE TRIGGER hotel.albaran_calcular_importe
+after insert on linea_albaran
+for each row
+begin
+update linea_albaran set importe = (precio_compra - ((new.descuento/100) * new.precio_compra) + ((new.impuesto/100) * new.precio_compra)) where id = new.id;
+UPDATE albaran 
+SET 
+    base_imponible = base_imponible + new.precio_compra,
+    total_impuestos = total_impuestos + ((new.impuesto / 100) * new.precio_compra),
+    total_descuentos = total_descuentos + ((new.descuento / 100) * new.precio_compra),
+    importe_total = importe_total + new.importe
+WHERE
+    id = new.albaran;
+end$$
+
+/*
+CREATE TRIGGER hotel.albaran_actualizar_importes
+after update on linea_albaran
+for each row
+begin
+update linea_albaran set importe = (precio_compra - ((new.descuento/100) * new.precio_compra) + ((new.impuesto/100) * new.precio_compra)) where id = new.id;
+UPDATE albaran 
+SET 
+    base_imponible = base_imponible + new.precio_compra - old.precio_compra,
+    total_impuestos = total_impuestos + ((new.impuesto / 100) * new.precio_compra) - ((old.impuesto / 100) * old.precio_compra),
+    total_descuentos = total_descuentos + ((new.descuento / 100) * new.precio_compra) - ((old.descuento / 100) * old.precio_compra),
+    importe_total = importe_total + new.importe - old.importe
+WHERE
+    id = new.albaran;
+end$$
+*/
+
+DELIMITER ;
 
 CREATE TABLE hotel.factura_pago (
     ID INT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
@@ -146,6 +185,7 @@ CREATE TABLE hotel.cliente (
     Apellido1 VARCHAR(25) NOT NULL,
     Apellido2 VARCHAR(25),
     Domicilio VARCHAR(120) NOT NULL,
+    Pais VARCHAR(30) NOT NULL,
     CONSTRAINT CH_cliente_NIF CHECK (NIF_NIE RLIKE '^[A-Z0-9]{1}[0-9]{7}[A-Z]{1}$')
 );
 
