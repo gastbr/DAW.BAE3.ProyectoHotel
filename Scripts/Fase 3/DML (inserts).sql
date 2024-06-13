@@ -4,17 +4,17 @@ INSERT INTO localidad (Localidad, Codigo_postal, Provincia, Pais)
 VALUES ('Madrid', '28001', 'Madrid', 'España'),
        ('Barcelona', '08001', 'Barcelona', 'España'),
        ('Sevilla', '41001', 'Sevilla', 'España'),
-       ('París', '64850', 'París', 'Francia'),
+       ('París', '94567', 'París', 'Francia'),
        ('Puerto del Rosario', '64850', 'Las Palmas de Gran Canaria', 'España'),
-       ('Agaete', '64850', 'Las Palmas de Gran Canaria', 'España'),
-       ('Ceuta', '64850', 'Ceuta', 'España'),
-       ('Berlín', '64850', 'Berlín', 'Alemania'),
-       ('Valladolid', '64850', 'Valladolid', 'España'),
-       ('Alicante', '64850', 'Alicante', 'España'),
-       ('La Coruña', '64850', 'La Coruña', 'España'),
-       ('Murcia', '64850', 'Murcia', 'España'),
-       ('Londres', '64850', 'Londres', 'Reino Unido'),
-       ('Pamplona', '64850', 'Navarra', 'España');
+       ('Agaete', '68148', 'Las Palmas de Gran Canaria', 'España'),
+       ('Ceuta', '94536', 'Ceuta', 'España'),
+       ('Berlín', '12345', 'Berlín', 'Alemania'),
+       ('Valladolid', '98765', 'Valladolid', 'España'),
+       ('Alicante', '46845', 'Alicante', 'España'),
+       ('La Coruña', '35784', 'La Coruña', 'España'),
+       ('Murcia', '61945', 'Murcia', 'España'),
+       ('Londres', '79785', 'Londres', 'Reino Unido'),
+       ('Pamplona', '34978', 'Navarra', 'España');
         
 INSERT INTO empleado 
     (Nombre, Apellido1, Apellido2, NIF_NIE, NIE_Antiguo, Seg_Social, Domicilio, Localidad, Puesto, Superior, Departamento) 
