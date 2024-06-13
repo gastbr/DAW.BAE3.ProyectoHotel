@@ -136,8 +136,6 @@ values
         nombre_articulo like '%ordenador%'
     )
   );
-  
-  insert into asdasd values (), (), ();
 
 -- Elimina de la tabla proveedor todos los proveedores que se encuentren en una localidad situada en el país Reino Unido.
 DELETE FROM proveedor 
