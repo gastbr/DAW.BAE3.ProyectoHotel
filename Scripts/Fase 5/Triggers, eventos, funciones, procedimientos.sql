@@ -76,6 +76,21 @@ begin
     return vpais;
 end$$
 
+-- Función: genera una cadena de caracteres aleatorios, apto para usarse como contraseña
+
+drop function if exists hotel.contrasenia$$
+create function hotel.contrasenia() returns varchar(32) deterministic
+begin
+	declare vpass varchar(32);
+    bucle: loop
+		set vpass = replace(uuid(), "-", "");
+		if (exists (select authentication_string from mysql.user where authentication_string = sha2(vpass, 224))) = false then
+			leave bucle;
+		end if;
+	end loop;
+    return vpass;
+end$$
+
 -- Una vez al mes, revisa todos los registros de pedidos, albaranes y facturas de pago y elimina todas las entradas que tengan una antigüedad mayor a 5 años.
 delimiter ;
 set global event_scheduler = on;
