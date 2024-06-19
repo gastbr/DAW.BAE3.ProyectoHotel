@@ -1,0 +1,103 @@
+Fase 1 (8.75): 
+	
+- Es mejor crear la entidad Reserva relacionada con Cliente y Habitación. Desde cada Reserva se puede relacionar con la factura de cobro
+- El artículo no es entidad débil para este caso
+- Entre Pedido y Albarán , sería mejor Albarán como débil y sería una relación de 1:N en todo caso
+- Entre las relaciones Suministra y Entrega faltaría indicar cantidad
+- La relación Ofrece es redundante
+- La relación Hace puede ser más adecuada con empleado
+
+Fase 2 (9.5): 
+
+Se ha subido el diagrama E/R con las correcciones anteriores en el documento Memoria
+
+Respecto a la obtención de las tablas:
+
+Se han obtenido las tablas correctamente, salvo en la tabla reserva. FacturaCobro debe aparecer IdReserva con una relación 1:1
+
+Respecto a los dominios y restricciones
+
+Se pueden mejorar o ajustar en algunos casos los tipos de datos y las restricciones asignadas en las tablas.
+
+Respecto a las formas normales:
+
+Se identifica correctamente Email/Teléfono en 1FN. Al resolver la normalización, Email debe ser PK y no descripción
+
+Se identifica y resuelve correctamente Localidad 3FN. 
+
+Se estudia de forma razonada las formas normales.  
+
+Respecto a la IR, se representa y justifica de forma adecuada
+
+Fase 3 (8.25):
+
+Se han obtenido 24 tablas
+
+Se recomienda usar character set utf8mb4 collate utf8mb4_0900_as_cs;
+
+Los tipos de datos en general son adecuados
+Hay restricciones del tipo NOT NULL, UNIQUE y DEFAULT
+Se hace uso de AUTO_INCREMENT en los identificadores
+Se pueden mejorar o ajustar en algunos casos los tipos de datos y las restricciones asignadas en las tablas.
+
+En general los checks propuestos son correctos y ayudan a controlar la entrada de datos, pero solo se han realizado 3 checks diferentes
+Se han usado diferentes operadores. 
+Se han usado expresiones regulares
+No se han usado funciones de cadenas de texto.
+
+Se ha aplicado borrado/modificación cascada en las tablas
+
+3 consultas por tipo. Se incluye una breve descripción. 
+
+Consultas internas:
+Se hace uso de funciones. Se combina con otros tipos
+
+Consultas externas:
+Se hace uso de funciones. Se combina con otros tipos
+
+Consultas agrupamiento:
+Se hace uso de funciones de agregación. Se combina con otros tipos
+No se hace uso de Having en ningún caso.
+
+Subconsultas:
+No hace uso de funciones. No usa subconsultas anidadas. No se hace uso de Any/All/Exists
+
+Manipulación:
+No se hace uso de funciones. Una consulta usa subconsultas anidadas.
+
+Fase 4 (9):
+
+Respecto a la Creación/modificado/borrado de las cuentas de usuario se puede describir más concretamente:
+El procedimiento para la solicitud de la creación de la cuenta y los datos necesarios para ello
+La validación de la solicitud, la creación de la cuenta y la entrega de credenciales (si fuera el caso).
+Es conveniente describir la gestión de las contraseñas indicando la longitud de las contraseñas y qué caracteres se pueden incluir, la caducidad, bloqueo en caso de no modificarse, etc.
+También el procedimiento de la modificación/borrado de la cuenta y cómo sería la notificación al usuario.
+Respecto a la revisión de permisos, justificar la frecuencia, los responsables, cuál es el procedimiento de revisión en función de las necesidades de los usuarios, y cómo sería la notificación al usuario.
+
+Fase 5 (9):
+
+En el documento, se describe lo que realiza y su funcionamiento a través de pantallazos
+Se propone añadir comentarios para su mejor comprensión
+
+Procedimiento: 
+Devuelve cadena con los email, nombre y descripcion
+Se proponen algunas mejoras:
+Se podría añadir un parametro de entrada que permita configurar la salida de la lista de correos, de manera que permita decidir si añadir el nombre o no, si añadir la descripción o no
+
+Función:
+Se realizan dos funciones
+Localizar país para CP o localidad
+Generar contraseñas
+Se proponen algunas mejoras:
+Se puede dar el caso de una misma localidad en paises diferentes
+Se podría añadir la longitud como parametro de entrada, para obtener contraseñas de una determinada longitud
+
+Trigger:
+Se realiza dos triggers para insertar y actualizar línea de albarán.
+Es funcional y original.
+Se recomienda añadir comentarios al script
+
+Evento:
+Se realiza un evento para eliminar pedidos, albaranes y facturas
+Se proponen algunas mejoras:
+Ajustar las fechas de lanzamiento del evento
